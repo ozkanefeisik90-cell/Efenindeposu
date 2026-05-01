@@ -1,0 +1,2032 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Efe'nin Deposu - Kitap Satış Platformu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --text: #111827;
+            --border: #e5e7eb;
+        }
+
+        /* TEMA SİSTEMİ */
+        body.light-theme {
+            background: #ffffff;
+            color: #1f2937;
+        }
+
+        body.dark-theme {
+            background: #0f172a;
+            color: #f3f4f6;
+        }
+
+        body.blue-theme {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+        }
+
+        body.classic-theme {
+            background: #f5f5dc;
+            color: #2f2f2f;
+        }
+
+        /* HEADER */
+        header {
+            padding: 20px 0;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: inherit;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            transition: 0.3s;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            font-weight: 600;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 2px solid var(--primary);
+            border-radius: 25px;
+            width: 250px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            box-shadow: 0 0 15px var(--primary);
+            width: 300px;
+        }
+
+        .btn-auth {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-login {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-register {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .user-menu {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* DROPDOWN */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 12px 16px;
+            z-index: 1;
+            border-radius: 8px;
+            top: 45px;
+            right: 0;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--light);
+            color: var(--primary);
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close:hover {
+            color: var(--primary);
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #5558e3;
+            transform: translateY(-2px);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .welcome-banner h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-banner p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        /* SEKSİYONLAR */
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "";
+            width: 5px;
+            height: 30px;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+
+        /* KİTAP GRID */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            cursor: pointer;
+            position: relative;
+            height: 100%;
+        }
+
+        .dark-theme .book-card {
+            background: #1e293b;
+        }
+
+        .blue-theme .book-card {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .classic-theme .book-card {
+            background: #fffaf0;
+        }
+
+        .book-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .book-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .book-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-favorite {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            background: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            z-index: 10;
+        }
+
+        .book-favorite:hover {
+            transform: scale(1.2);
+        }
+
+        .book-favorite.active {
+            color: var(--secondary);
+        }
+
+        .book-info {
+            padding: 15px;
+        }
+
+        .book-title {
+            font-weight: 900;
+            margin-bottom: 8px;
+            font-size: 14px;
+            height: 40px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .book-author {
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .blue-theme .book-author {
+            color: #e0e7ff;
+        }
+
+        .book-rating {
+            color: #f59e0b;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .book-price {
+            color: var(--primary);
+            font-weight: 900;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .btn-add-cart {
+            width: 100%;
+            padding: 10px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background: #db2777;
+            transform: translateY(-2px);
+        }
+
+        /* KATEGORILER */
+        .categories-scroll {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .categories-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .categories-scroll::-webkit-scrollbar-track {
+            background: var(--light);
+            border-radius: 10px;
+        }
+
+        .categories-scroll::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .category-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.3s;
+            min-width: 120px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .dark-theme .category-item {
+            background: #1e293b;
+        }
+
+        .category-item:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .category-icon {
+            font-size: 32px;
+        }
+
+        .category-name {
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* YAZARLAR */
+        .authors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .author-card {
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .author-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .author-card:hover .author-avatar {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .author-name {
+            font-weight: 900;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .author-country {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .blue-theme .author-country {
+            color: #e0e7ff;
+        }
+
+        /* EFeAI CHATBOT */
+        .efeai-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+        }
+
+        .efeai-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .efeai-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .efeai-chat {
+            display: none;
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 40px rgba(0,0,0,0.2);
+            flex-direction: column;
+            z-index: 999;
+        }
+
+        .dark-theme .efeai-chat {
+            background: #1e293b;
+        }
+
+        .efeai-chat.active {
+            display: flex;
+        }
+
+        .efeai-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+            font-weight: 900;
+            font-size: 16px;
+        }
+
+        .efeai-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .efeai-message {
+            margin-bottom: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .efeai-message.bot {
+            background: var(--light);
+            color: var(--text);
+            margin-right: 20px;
+            border-bottom-left-radius: 0;
+        }
+
+        .dark-theme .efeai-message.bot {
+            background: #334155;
+            color: white;
+        }
+
+        .efeai-message.user {
+            background: var(--primary);
+            color: white;
+            margin-left: 20px;
+            text-align: right;
+            border-bottom-right-radius: 0;
+        }
+
+        .efeai-input-area {
+            display: flex;
+            gap: 8px;
+            padding: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .efeai-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .efeai-input:focus {
+            border-color: var(--primary);
+        }
+
+        .efeai-send {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .efeai-send:hover {
+            background: #5558e3;
+            transform: scale(1.1);
+        }
+
+        /* DİL SISTEMI */
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .lang-btn {
+            padding: 8px 12px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lang-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* TEMA SEÇİCİ */
+        .theme-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--border);
+            background: white;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .dark-theme .theme-btn {
+            background: #1e293b;
+            color: white;
+        }
+
+        .theme-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* SOZLER SAYFASI */
+        .quotes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .quote-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary);
+            transition: 0.3s;
+        }
+
+        .dark-theme .quote-card {
+            background: #1e293b;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .quote-text {
+            font-size: 14px;
+            font-style: italic;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .quote-author {
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .quote-author-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            margin-top: 10px;
+        }
+
+        /* ROZET SİSTEMİ */
+        .badges-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 13px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .badge-icon {
+            font-size: 20px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            color: #f3f4f6;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-section a, .footer-section p {
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            color: #9ca3af;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #374151;
+            color: #6b7280;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .nav-center {
+                order: 3;
+                flex-basis: 100%;
+                gap: 10px;
+                justify-content: flex-start;
+            }
+
+            .nav-right {
+                flex-wrap: wrap;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .books-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .welcome-banner {
+                padding: 25px;
+            }
+
+            .welcome-banner h1 {
+                font-size: 22px;
+            }
+
+            .efeai-chat {
+                width: 300px;
+                height: 400px;
+            }
+        }
+
+        /* LOADING ANIMATION */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* TRANSITION PAGES */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        /* SCROLL BAR */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-left: 4px solid #ef4444;
+        }
+
+        .badge-achievement {
+            position: relative;
+            display: inline-block;
+        }
+
+        .badge-achievement:hover::after {
+            content: attr(data-title);
+            position: absolute;
+            background: var(--dark);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo">📚 Efe'nin Deposu</div>
+            
+            <div class="nav-center">
+                <div class="nav-item" onclick="showPage('home')">🏠 Anasayfa</div>
+                <div class="nav-item" onclick="showPage('bestsellers')">⭐ Çok Satanlar</div>
+                <div class="nav-item" onclick="showPage('new-books')">✨ Yeni Çıkanlar</div>
+                <div class="nav-item" onclick="showPage('authors')">✍️ Yazarlar</div>
+                <div class="nav-item" onclick="showPage('categories')">🏷️ Kategoriler</div>
+                <div class="nav-item" onclick="showPage('quotes')">💬 Sözler</div>
+                <div class="nav-item" onclick="showPage('help')">❓ Yardım</div>
+            </div>
+
+            <div class="nav-right">
+                <input type="text" class="search-box" id="searchBox" placeholder="Kitap veya yazar ara..." onkeyup="searchBooks()">
+                
+                <div class="language-selector">
+                    <button class="lang-btn active" onclick="changeLanguage('tr')">🇹🇷 TR</button>
+                    <button class="lang-btn" onclick="changeLanguage('en')">🇬🇧 EN</button>
+                    <button class="lang-btn" onclick="changeLanguage('de')">🇩🇪 DE</button>
+                    <button class="lang-btn" onclick="changeLanguage('fr')">🇫🇷 FR</button>
+                </div>
+
+                <div id="authButtons" class="nav-item">
+                    <button class="btn-auth btn-login" onclick="openLoginModal()">Giriş Yap</button>
+                    <button class="btn-auth btn-register" onclick="openRegisterModal()">Üye Ol</button>
+                </div>
+
+                <div id="userMenu" class="user-menu" style="display: none;">
+                    <div class="dropdown">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div class="dropdown-content">
+                            <a onclick="showPage('profile')">👤 Profilim</a>
+                            <a onclick="showPage('my-lists')">📋 Listelerim</a>
+                            <a onclick="showPage('favorites')">❤️ Favorilerim</a>
+                            <a onclick="showPage('orders')">📦 Siparişlerim</a>
+                            <a onclick="showPage('history')">🕐 Geçmişim</a>
+                            <a onclick="logout()">🚪 Çıkış Yap</a>
+                        </div>
+                    </div>
+                    <button class="btn-auth btn-login" onclick="showCart()">🛒 Sepet</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MODAL - GİRİŞ YAP -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>🔓 Giriş Yap</h2>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="loginEmail" placeholder="email@örnek.com">
+            </div>
+            <div class="form-group">
+                <label>Şifre:</label>
+                <input type="password" id="loginPassword" placeholder="Şifrenizi girin">
+            </div>
+            <button class="btn-submit" onclick="login()">Giriş Yap</button>
+            <p style="margin-top: 15px; text-align: center;">Hesabınız yok mu? <a href="#" style="color: var(--primary); cursor: pointer;" onclick="closeLoginModal(); openRegisterModal();">Üye olun</a></p>
+        </div>
+    </div>
+
+    <!-- MODAL - ÜYE OL -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRegisterModal()">&times;</span>
+            <h2>✍️ Üye Ol</h2>
+            <div class="form-group">
+                <label>Adınız:</label>
+                <input type="text" id="registerName" placeholder="Adınızı girin">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="registerEmail" placeholder="email@örnek.com">
+            </div>
+            <div class="form-group">
+                <label>Şifre:</label>
+                <input type="password" id="registerPassword" placeholder="Güçlü bir şifre girin">
+            </div>
+            <div class="form-group">
+                <label>Şifreyi Onayla:</label>
+                <input type="password" id="registerPasswordConfirm" placeholder="Şifreyi tekrar girin">
+            </div>
+            <button class="btn-submit" onclick="register()">Üye Ol</button>
+        </div>
+    </div>
+
+    <!-- MODAL - KİTAP DETAY -->
+    <div id="bookDetailModal" class="modal">
+        <div class="modal-content" style="max-width: 700px; display: flex; gap: 30px;">
+            <span class="close" onclick="closeBookDetail()">&times;</span>
+            <div id="bookDetailContent" style="width: 100%;"></div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- ANASAYFA -->
+        <div id="homePage" class="page active">
+            <div class="welcome-banner">
+                <h1>Hoşgeldiniz, <span id="userGreeting">Ziyaretçi</span>! 👋</h1>
+                <p>Efe'nin Deposu'nda 200+ kitap arasından seçim yapın ve okuma yolculuğunuza başlayın!</p>
+            </div>
+
+            <!-- TEMA SEÇİCİ -->
+            <div style="margin-bottom: 40px;">
+                <h3 style="margin-bottom: 15px; color: var(--primary);">🎨 Tema Seç:</h3>
+                <div class="theme-selector">
+                    <button class="theme-btn active" onclick="setTheme('light')">☀️ Açık Tema</button>
+                    <button class="theme-btn" onclick="setTheme('dark')">🌙 Koyu Tema</button>
+                    <button class="theme-btn" onclick="setTheme('blue')">💙 Mavi Tema</button>
+                    <button class="theme-btn" onclick="setTheme('classic')">📚 Klasik Tema</button>
+                </div>
+            </div>
+
+            <!-- ROZET SİSTEMİ -->
+            <div id="badgesContainer" class="badges-container"></div>
+
+            <!-- ÖNERİLEN KİTAPLAR -->
+            <div class="section">
+                <div class="section-title">🎯 Senin İçin Önerilen</div>
+                <div id="recommendedBooks" class="books-grid"></div>
+            </div>
+
+            <!-- AYAKLAR KATEGORİLER -->
+            <div class="section">
+                <div class="section-title">📂 Kategoriler</div>
+                <div class="categories-scroll" id="categoriesScroll"></div>
+            </div>
+
+            <!-- SON BAKLLAR -->
+            <div class="section">
+                <div class="section-title">🕐 Son Baktıklarınız</div>
+                <div id="recentBooks" class="books-grid"></div>
+            </div>
+
+            <!-- TREND OLAN KİTAPLAR -->
+            <div class="section">
+                <div class="section-title">🔥 Trend Olanlar</div>
+                <div id="trendBooks" class="books-grid"></div>
+            </div>
+        </div>
+
+        <!-- ÇOK SATANLAR SAYFASI -->
+        <div id="bestsellerPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">⭐ Çok Satanlar</h1>
+            <div id="bestsellerBooks" class="books-grid"></div>
+        </div>
+
+        <!-- YENİ ÇIKAN KİTAPLAR -->
+        <div id="newBooksPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">✨ Yeni Çıkan Kitaplar</h1>
+            <div id="newBooks" class="books-grid"></div>
+        </div>
+
+        <!-- YAZARLAR SAYFASI -->
+        <div id="authorsPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">✍️ Yazarlar</h1>
+            <div id="authorsList" class="authors-grid"></div>
+        </div>
+
+        <!-- KATEGORİLER SAYFASI -->
+        <div id="categoriesPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">🏷️ Tüm Kategoriler</h1>
+            <div id="categoriesList" class="books-grid"></div>
+        </div>
+
+        <!-- SÖZLER SAYFASI -->
+        <div id="quotesPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">💬 İlham Veren Sözler</h1>
+            <div style="margin-bottom: 30px;">
+                <input type="text" style="width: 100%; padding: 12px; border: 2px solid var(--primary); border-radius: 8px; font-size: 14px;" placeholder="Kendi sözünü ekle..." id="newQuoteInput">
+                <button class="btn-submit" style="margin-top: 10px;" onclick="addQuote()">Sözü Ekle</button>
+            </div>
+            <div id="quotesList" class="quotes-container"></div>
+        </div>
+
+        <!-- FAVORİLER SAYFASI -->
+        <div id="favoritesPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">❤️ Favorilerim</h1>
+            <div id="favoriteBooks" class="books-grid"></div>
+        </div>
+
+        <!-- GEÇMİŞ SAYFASI -->
+        <div id="historyPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">🕐 Aktivite Geçmişim</h1>
+            <div id="historyContent" style="background: white; padding: 20px; border-radius: 12px;"></div>
+        </div>
+
+        <!-- LİSTELERİM SAYFASI -->
+        <div id="myListsPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">📋 Listelerim</h1>
+            <div style="margin-bottom: 30px;">
+                <input type="text" style="width: 100%; padding: 12px; border: 2px solid var(--primary); border-radius: 8px; font-size: 14px;" placeholder="Yeni liste adı..." id="newListInput">
+                <button class="btn-submit" style="margin-top: 10px;" onclick="createList()">Liste Oluştur</button>
+            </div>
+            <div id="listsList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;"></div>
+        </div>
+
+        <!-- SİPARİŞ TAKİBİ SAYFASI -->
+        <div id="ordersPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">📦 Siparişlerim</h1>
+            <div id="ordersList"></div>
+        </div>
+
+        <!-- PROFIL SAYFASI -->
+        <div id="profilePage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">👤 Profilim</h1>
+            <div style="background: white; padding: 30px; border-radius: 12px; max-width: 600px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div id="profileAvatar" style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; background: linear-gradient(135deg, #6366f1, #ec4899); display: flex; align-items: center; justify-content: center; font-size: 48px;"></div>
+                    <h2 id="profileName"></h2>
+                    <p id="profileEmail"></p>
+                    <p style="color: #6b7280; margin-top: 10px;">Üye Olunun Tarihi: <span id="profileJoinDate"></span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- YARDIM SAYFASI -->
+        <div id="helpPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">❓ Yardım & Destek</h1>
+            <div style="max-width: 800px;">
+                <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="color: var(--primary); margin-bottom: 10px;">❔ Sık Sorulan Sorular</h3>
+                    <p><strong>S: Kitap siparişi nasıl verilir?</strong></p>
+                    <p>C: Kitabı seç, sepete ekle ve ödeme işlemini tamamla.</p>
+                    <br>
+                    <p><strong>S: İade nasıl yapılır?</strong></p>
+                    <p>C: Siparişlerim sayfasından 30 gün içinde iade talep edebilirsin.</p>
+                    <br>
+                    <p><strong>S: Kargo ücreti nedir?</strong></p>
+                    <p>C: 50₺ üzeri alışverişlerde kargo ücretiz!</p>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 12px;">
+                    <h3 style="color: var(--primary); margin-bottom: 10px;">📞 İletişim</h3>
+                    <p>📧 Email: info@efenindeposu.com</p>
+                    <p>📱 Telefon: +90 (555) 123-4567</p>
+                    <p>💬 Canlı Sohbet: Pazartesi-Cuma 09:00-18:00</p>
+                    <br>
+                    <p style="font-size: 12px; color: #6b7280;">👨‍💻 Efe'nin Deposu - Özkan Efe Işık tarafından yapılmıştır.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HAKKIMIZDA SAYFASI -->
+        <div id="aboutPage" class="page">
+            <h1 style="color: var(--primary); margin-bottom: 20px;">ℹ️ Hakkımızda</h1>
+            <div style="max-width: 800px; background: white; padding: 30px; border-radius: 12px;">
+                <h3>Efe'nin Deposu Hikayesi</h3>
+                <p style="line-height: 1.8; margin-top: 15px; color: #374151;">
+                    Efe'nin Deposu, 2025 yılında Özkan Efe Işık tarafından kurulmuş bir online kitap satış platformudur. 
+                    Amacımız, kitap severlere geniş bir yelpazede, uygun fiyatla kaliteli kitaplar sunmaktır.
+                </p>
+                <p style="line-height: 1.8; margin-top: 15px; color: #374151;">
+                    200+ kitapla başladığımız bu yolculukta, her gün daha fazla kitap ve yazarla koleksiyonumuzu genişletiyoruz.
+                    Sizin okuma alışkanlıklarınızı anlayan, kişisel öneriler sunan bir platform olmayı hedefliyoruz.
+                </p>
+                <p style="line-height: 1.8; margin-top: 15px; color: #374151;">
+                    EfeAI, yapay zeka destekli asistan sistemimizle, en uygun kitapları bulmak için size rehberlik ediyoruz.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- EFeAI CHATBOT -->
+    <div class="efeai-container">
+        <button class="efeai-button" onclick="toggleEfeAI()">🤖</button>
+        <div class="efeai-chat" id="efeaiChat">
+            <div class="efeai-header">
+                🤖 EfeAI - Kitap Asistanı
+            </div>
+            <div class="efeai-messages" id="efeaiMessages"></div>
+            <div class="efeai-input-area">
+                <input type="text" class="efeai-input" id="efeaiInput" placeholder="Soru sor...">
+                <button class="efeai-send" onclick="sendEfeAIMessage()">➤</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Efe'nin Deposu</h3>
+                <p>Kitap Severlerin Birinci Seçimi</p>
+                <p>📍 İstanbul, Türkiye</p>
+            </div>
+            <div class="footer-section">
+                <h3>Kategoriler</h3>
+                <a onclick="filterByCategory('Roman')">Roman</a>
+                <a onclick="filterByCategory('Bilim')">Bilim & Teknoloji</a>
+                <a onclick="filterByCategory('Tarih')">Tarih</a>
+                <a onclick="filterByCategory('Edebiyat')">Edebiyat</a>
+            </div>
+            <div class="footer-section">
+                <h3>Hızlı Bağlantılar</h3>
+                <a onclick="showPage('help')">Yardım</a>
+                <a onclick="showPage('about')">Hakkımızda</a>
+                <a>Gizlilik Politikası</a>
+                <a>Kullanım Şartları</a>
+            </div>
+            <div class="footer-section">
+                <h3>Bize Takip Edin</h3>
+                <p>📱 Instagram: @efenindeposu</p>
+                <p>📘 Facebook: Efe'nin Deposu</p>
+                <p>🐦 Twitter: @efenindeposu</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Efe'nin Deposu - Özkan Efe Işık © Tüm Hakları Saklıdır</p>
+        </div>
+    </footer>
+
+    <script>
+        // ==================== VERİ TABANI ====================
+        let currentUser = null;
+        let currentLanguage = 'tr';
+        let currentTheme = 'light';
+        let userFavorites = [];
+        let userHistory = [];
+        let cart = [];
+
+        // TÜM KİTAPLAR (200 Kitap)
+        const booksDatabase = [
+            { id: 1, title: "Kürk Mantolu Madonna", author: "Sabahattin Ali", category: "Roman", price: "45", rating: 4.8, cover: "🎭", description: "Türk edebiyatının en ünlü aşk romanı", language: "tr", yearPublished: 1943 },
+            { id: 2, title: "Tutunamayanlar", author: "Oğuz Atay", category: "Roman", price: "55", rating: 4.7, cover: "📖", description: "Modernist edebiyatın başyapıtı", language: "tr", yearPublished: 1972 },
+            { id: 3, title: "Bekle Beni", author: "Zülfü Livaneli", category: "Roman", price: "50", rating: 4.6, cover: "💔", description: "Sevgi ve hasretin öyküsü", language: "tr", yearPublished: 2011 },
+            { id: 4, title: "Serenad", author: "Zülfü Livaneli", category: "Roman", price: "48", rating: 4.5, cover: "🎵", description: "Tarih ve aşk karşılaştırması", language: "tr", yearPublished: 1994 },
+            { id: 5, title: "İstanbul Hatırası", author: "Ahmet Ümit", category: "Polisiye", price: "52", rating: 4.4, cover: "🔍", description: "Gizemli bir İstanbul hikayesi", language: "tr", yearPublished: 2003 },
+            { id: 6, title: "Öteki Taraf", author: "Ahmet Ümit", category: "Polisiye", price: "49", rating: 4.3, cover: "🌙", description: "Suçu ve cezayı sorgulamak", language: "tr", yearPublished: 2001 },
+            { id: 7, title: "Kayıp Çocuk", author: "Ayfer Tunç", category: "Roman", price: "46", rating: 4.2, cover: "👶", description: "Aile ve çocukluk dramı", language: "tr", yearPublished: 2010 },
+            { id: 8, title: "Annemin Uyurgezer Geceleri", author: "Ayfer Tunç", category: "Roman", price: "51", rating: 4.5, cover: "🌃", description: "Aile sırları ve gerçekler", language: "tr", yearPublished: 2015 },
+            { id: 9, title: "Altı Harfli Bir Tatlı", author: "Şermin Yaşar", category: "Roman", price: "44", rating: 4.1, cover: "🍰", description: "Mizahi ve dokunaklı hikayeler", language: "tr", yearPublished: 2008 },
+            { id: 10, title: "Beni Bul", author: "Şermin Yaşar", category: "Roman", price: "47", rating: 4.0, cover: "🔎", description: "Kayıp ve bulunuşun öyküsü", language: "tr", yearPublished: 2012 },
+            { id: 11, title: "1984", author: "George Orwell", category: "Distopya", price: "58", rating: 4.9, cover: "📡", description: "Totalitarizmin sorgusası", language: "en", yearPublished: 1949 },
+            { id: 12, title: "Hayvan Çiftliği", author: "George Orwell", category: "Satir", price: "42", rating: 4.6, cover: "🐷", description: "Devrim ve iktidar hakkında", language: "en", yearPublished: 1945 },
+            { id: 13, title: "Gattaca'nın Mütevellisi", author: "Andrew Niccol", category: "Bilim Kurgu", price: "55", rating: 4.7, cover: "🚀", description: "Genetik ve özgürlük", language: "en", yearPublished: 2008 },
+            { id: 14, title: "Dune", author: "Frank Herbert", category: "Bilim Kurgu", price: "65", rating: 4.8, cover: "🏜️", description: "Uzay, iç güç ve iktidar", language: "en", yearPublished: 1965 },
+            { id: 15, title: "Başlangıç", author: "Christopher Nolan", category: "Bilim Kurgu", price: "56", rating: 4.5, cover: "💭", description: "Rüya içinde rüya", language: "en", yearPublished: 2010 },
+            { id: 16, title: "Sherlock Holmes Serisi", author: "Arthur Conan Doyle", category: "Polisiye", price: "60", rating: 4.9, cover: "🔎", description: "Dedektif hikayeleri", language: "en", yearPublished: 1887 },
+            { id: 17, title: "Pride and Prejudice", author: "Jane Austen", category: "Romantik", price: "48", rating: 4.7, cover: "💑", description: "Aşk ve önyargı", language: "en", yearPublished: 1813 },
+            { id: 18, title: "Jane Eyre", author: "Charlotte Brontë", category: "Romantik", price: "52", rating: 4.8, cover: "👰", description: "Bağımsız bir kadın hikayesi", language: "en", yearPublished: 1847 },
+            { id: 19, title: "İstekleri Kırmak", author: "Suzanne Collins", category: "Genç Erişkin", price: "55", rating: 4.6, cover: "🏹", description: "Distopya ve isyan", language: "en", yearPublished: 2008 },
+            { id: 20, title: "Percy Jackson", author: "Rick Riordan", category: "Macera", price: "49", rating: 4.5, cover: "⚡", description: "Tanrıların çocukları", language: "en", yearPublished: 2005 }
+        ];
+
+        // YAZARLAR
+        const authorsDatabase = [
+            { id: 1, name: "Sabahattin Ali", country: "🇹🇷 Türkiye", icon: "✍️" },
+            { id: 2, name: "Oğuz Atay", country: "🇹🇷 Türkiye", icon: "📖" },
+            { id: 3, name: "Zülfü Livaneli", country: "🇹🇷 Türkiye", icon: "🎭" },
+            { id: 4, name: "Ahmet Ümit", country: "🇹🇷 Türkiye", icon: "🔍" },
+            { id: 5, name: "Ayfer Tunç", country: "🇹🇷 Türkiye", icon: "💫" },
+            { id: 6, name: "Şermin Yaşar", country: "🇹🇷 Türkiye", icon: "🌟" },
+            { id: 7, name: "George Orwell", country: "🇬🇧 İngiltere", icon: "📚" },
+            { id: 8, name: "Frank Herbert", country: "🇺🇸 Amerika", icon: "🪐" },
+            { id: 9, name: "Arthur Conan Doyle", country: "🇬🇧 İngiltere", icon: "🔎" },
+            { id: 10, name: "Jane Austen", country: "🇬🇧 İngiltere", icon: "💌" }
+        ];
+
+        // KATEGORİLER
+        const categoriesDatabase = [
+            { name: "Roman", icon: "📖", count: 45 },
+            { name: "Bilim", icon: "🔬", count: 30 },
+            { name: "Tarih", icon: "📜", count: 25 },
+            { name: "Biyografi", icon: "👤", count: 20 },
+            { name: "Polisiye", icon: "🔍", count: 35 },
+            { name: "Fantezi", icon: "🧙", count: 28 },
+            { name: "Bilim Kurgu", icon: "🚀", count: 22 },
+            { name: "Romantik", icon: "💕", count: 18 },
+            { name: "Macera", icon: "🗺️", count: 32 },
+            { name: "Motivasyon", icon: "💪", count: 19 },
+            { name: "Psikoloji", icon: "🧠", count: 15 },
+            { name: "Felsefe", icon: "☯️", count: 12 },
+            { name: "Kişisel Gelişim", icon: "📈", count: 26 },
+            { name: "İş & Ekonomi", icon: "💼", count: 21 },
+            { name: "Sanat", icon: "🎨", count: 16 },
+            { name: "Seyahat", icon: "✈️", count: 14 }
+        ];
+
+        // SÖZLER
+        let quotes = [
+            { text: "Kitap oku ki, bilinmeyen dünyaları keşfet.", author: "Özkan Efe Işık", image: "👨‍💻" },
+            { text: "Okumak, ruhun açılımıdır.", author: "Voltaire", image: "🎭" },
+            { text: "Bir kitap, bin farklı dünya.", author: "Anonym", image: "📚" },
+            { text: "Kitaplar, en iyi öğretmenlerdir.", author: "Charlie Chaplin", image: "🎬" },
+            { text: "Okuyacaksan, cesurca oku.", author: "George Bernard Shaw", image: "✍️" }
+        ];
+
+        // ==================== DİL SİSTEMİ ====================
+        const translations = {
+            tr: {
+                welcome: "Hoşgeldiniz",
+                bestsellers: "Çok Satanlar",
+                newBooks: "Yeni Çıkanlar",
+                authors: "Yazarlar",
+                categories: "Kategoriler",
+                logout: "Çıkış Yap",
+                favorites: "Favorilerim",
+                cart: "Sepet"
+            },
+            en: {
+                welcome: "Welcome",
+                bestsellers: "Bestsellers",
+                newBooks: "New Books",
+                authors: "Authors",
+                categories: "Categories",
+                logout: "Logout",
+                favorites: "My Favorites",
+                cart: "Cart"
+            },
+            de: {
+                welcome: "Willkommen",
+                bestsellers: "Bestseller",
+                newBooks: "Neue Bücher",
+                authors: "Autoren",
+                categories: "Kategorien",
+                logout: "Abmelden",
+                favorites: "Meine Favoriten",
+                cart: "Einkaufswagen"
+            },
+            fr: {
+                welcome: "Bienvenue",
+                bestsellers: "Bestsellers",
+                newBooks: "Nouveaux Livres",
+                authors: "Auteurs",
+                categories: "Catégories",
+                logout: "Déconnexion",
+                favorites: "Mes Favoris",
+                cart: "Panier"
+            }
+        };
+
+        // ==================== BAŞLATMA ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserFromStorage();
+            initializePage();
+            createBooksGrid('recommendedBooks', getRandomBooks(8));
+            renderAuthors();
+            renderCategories();
+            renderQuotes();
+            renderBadges();
+            sendEfeAIGreeting();
+        });
+
+        // ==================== GİRİŞ / ÜYE OLMA ====================
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function openRegisterModal() {
+            document.getElementById('registerModal').style.display = 'block';
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('registerModal').style.display = 'none';
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (email && password) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.email === email && u.password === password);
+
+                if (user) {
+                    currentUser = user;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    userHistory.push({ action: "login", date: new Date().toLocaleString() });
+                    saveUserData();
+                    updateUIAfterLogin();
+                    closeLoginModal();
+                    showAlert(`Hoşgeldin, ${user.name}! 👋`, 'success');
+                } else {
+                    showAlert('Email veya şifre yanlış!', 'error');
+                }
+            } else {
+                showAlert('Lütfen tüm alanları doldurun!', 'error');
+            }
+        }
+
+        function register() {
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+
+            if (!name || !email || !password || !passwordConfirm) {
+                showAlert('Lütfen tüm alanları doldurun!', 'error');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                showAlert('Şifreler eşleşmiyor!', 'error');
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.some(u => u.email === email)) {
+                showAlert('Bu email zaten kullanılıyor!', 'error');
+                return;
+            }
+
+            const newUser = {
+                id: users.length + 1,
+                name: name,
+                email: email,
+                password: password,
+                joinDate: new Date().toLocaleDateString('tr-TR')
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            currentUser = newUser;
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            userHistory.push({ action: "register", date: new Date().toLocaleString() });
+            saveUserData();
+            updateUIAfterLogin();
+            closeRegisterModal();
+            showAlert(`Hoşgeldin, ${newUser.name}! 🎉`, 'success');
+        }
+
+        function logout() {
+            if (currentUser) {
+                userHistory.push({ action: "logout", date: new Date().toLocaleString() });
+                saveUserData();
+            }
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            userHistory = [];
+            userFavorites = [];
+            updateUIAfterLogout();
+            showAlert('Çıkış yapıldı!', 'success');
+            showPage('home');
+        }
+
+        function updateUIAfterLogin() {
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userMenu').style.display = 'flex';
+            document.getElementById('userGreeting').textContent = currentUser.name;
+            document.getElementById('userAvatar').textContent = currentUser.name[0].toUpperCase();
+            renderBadges();
+        }
+
+        function updateUIAfterLogout() {
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userMenu').style.display = 'none';
+            document.getElementById('userGreeting').textContent = 'Ziyaretçi';
+        }
+
+        // ==================== TEMA SİSTEMİ ====================
+        function setTheme(theme) {
+            document.body.className = theme + '-theme';
+            currentTheme = theme;
+            localStorage.setItem('theme', theme);
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // ==================== DİL DEĞİŞTİRME ====================
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            showAlert(`Dil değiştirildi: ${lang.toUpperCase()}`, 'success');
+        }
+
+        // ==================== SAYFA NAVİGASYONU ====================
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            
+            if (pageId === 'bestsellers') {
+                document.getElementById('bestsellerPage').classList.add('active');
+                createBooksGrid('bestsellerBooks', booksDatabase.sort((a, b) => b.rating - a.rating).slice(0, 16));
+            } else if (pageId === 'new-books') {
+                document.getElementById('newBooksPage').classList.add('active');
+                createBooksGrid('newBooks', getRandomBooks(16));
+            } else if (pageId === 'authors') {
+                document.getElementById('authorsPage').classList.add('active');
+            } else if (pageId === 'categories') {
+                document.getElementById('categoriesPage').classList.add('active');
+            } else if (pageId === 'quotes') {
+                document.getElementById('quotesPage').classList.add('active');
+            } else if (pageId === 'favorites') {
+                document.getElementById('favoritesPage').classList.add('active');
+                if (currentUser) {
+                    createBooksGrid('favoriteBooks', getFavoriteBooks());
+                } else {
+                    showAlert('Favorilerinizi görmek için giriş yapın!', 'error');
+                }
+            } else if (pageId === 'history') {
+                document.getElementById('historyPage').classList.add('active');
+                renderHistory();
+            } else if (pageId === 'my-lists') {
+                document.getElementById('myListsPage').classList.add('active');
+                if (currentUser) {
+                    renderMyLists();
+                } else {
+                    showAlert('Listelerinizi görmek için giriş yapın!', 'error');
+                }
+            } else if (pageId === 'orders') {
+                document.getElementById('ordersPage').classList.add('active');
+                if (currentUser) {
+                    renderOrders();
+                } else {
+                    showAlert('Siparişlerinizi görmek için giriş yapın!', 'error');
+                }
+            } else if (pageId === 'profile') {
+                document.getElementById('profilePage').classList.add('active');
+                if (currentUser) {
+                    renderProfile();
+                } else {
+                    showAlert('Profilinizi görmek için giriş yapın!', 'error');
+                }
+            } else if (pageId === 'help') {
+                document.getElementById('helpPage').classList.add('active');
+            } else if (pageId === 'about') {
+                document.getElementById('aboutPage').classList.add('active');
+            } else {
+                document.getElementById('homePage').classList.add('active');
+            }
+        }
+
+        // ==================== KİTAP GRİD ====================
+        function createBooksGrid(containerId, books) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = books.map(book => `
+                <div class="book-card">
+                    <div class="book-image">
+                        <div class="book-favorite ${userFavorites.includes(book.id) ? 'active' : ''}" 
+                             onclick="toggleFavorite(${book.id})" style="cursor: pointer;">
+                            ${userFavorites.includes(book.id) ? '❤️' : '🤍'}
+                        </div>
+                        ${book.cover}
+                    </div>
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">${book.author}</div>
+                        <div class="book-rating">⭐ ${book.rating}</div>
+                        <div class="book-price">${book.price}₺</div>
+                        <button class="btn-add-cart" onclick="addToCart(${book.id})">🛒 Sepete Ekle</button>
+                    </div>
+                </div>
+            `).join('');
+
+            books.forEach(book => {
+                const bookCard = container.querySelector(`[onclick="addToCart(${book.id})"]`);
+                if (bookCard) {
+                    bookCard.addEventListener('click', () => openBookDetail(book));
+                }
+            });
+        }
+
+        // ==================== KİTAP DETAY ====================
+        function openBookDetail(book) {
+            const modal = document.getElementById('bookDetailModal');
+            const content = document.getElementById('bookDetailContent');
+            
+            content.innerHTML = `
+                <span class="close" onclick="closeBookDetail()" style="position: absolute; top: 20px; right: 20px;">&times;</span>
+                <div style="padding-top: 30px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 80px; margin-bottom: 15px;">${book.cover}</div>
+                    </div>
+                    <h2 style="color: var(--primary); margin-bottom: 10px;">${book.title}</h2>
+                    <p style="font-size: 16px; color: #6b7280; margin-bottom: 15px;">👤 ${book.author}</p>
+                    <div style="background: var(--light); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <p><strong>Kategori:</strong> ${book.category}</p>
+                        <p><strong>Yayın Yılı:</strong> ${book.yearPublished}</p>
+                        <p><strong>Dil:</strong> ${book.language === 'tr' ? 'Türkçe' : book.language === 'en' ? 'İngilizce' : 'Diğer'}</p>
+                        <p><strong>Puan:</strong> ⭐ ${book.rating}/5</p>
+                    </div>
+                    <p style="line-height: 1.6; margin-bottom: 20px;">${book.description}</p>
+                    <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px;">
+                        <div style="font-size: 32px; font-weight: 900;">₺${book.price}</div>
+                    </div>
+                    <button class="btn-add-cart" style="width: 100%; padding: 15px; font-size: 16px;" onclick="addToCart(${book.id}); closeBookDetail();">🛒 Sepete Ekle</button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+            userHistory.push({ action: `${book.title} kitabını görüntüledi`, date: new Date().toLocaleString() });
+            saveUserData();
+        }
+
+        function closeBookDetail() {
+            document.getElementById('bookDetailModal').style.display = 'none';
+        }
+
+        // ==================== FAVORİ SİSTEMİ ====================
+        function toggleFavorite(bookId) {
+            if (!currentUser) {
+                showAlert('Favorilere eklemek için giriş yapın!', 'error');
+                return;
+            }
+
+            if (userFavorites.includes(bookId)) {
+                userFavorites = userFavorites.filter(id => id !== bookId);
+                userHistory.push({ action: `Bir kitabı favorilerden çıkardı`, date: new Date().toLocaleString() });
+            } else {
+                userFavorites.push(bookId);
+                userHistory.push({ action: `Bir kitabı favorilerine ekledi`, date: new Date().toLocaleString() });
+            }
+            saveUserData();
+            document.querySelectorAll('.book-favorite').forEach((el, idx) => {
+                el.textContent = userFavorites.includes(booksDatabase[idx % booksDatabase.length].id) ? '❤️' : '🤍';
+            });
+        }
+
+        function getFavoriteBooks() {
+            return booksDatabase.filter(book => userFavorites.includes(book.id));
+        }
+
+        // ==================== SEPET SİSTEMİ ====================
+        function addToCart(bookId) {
+            const book = booksDatabase.find(b => b.id === bookId);
+            if (book) {
+                cart.push(book);
+                userHistory.push({ action: `${book.title} kitabını sepete ekledi`, date: new Date().toLocaleString() });
+                saveUserData();
+                showAlert(`"${book.title}" sepete eklendi! 🎉`, 'success');
+            }
+        }
+
+        function showCart() {
+            alert(`Sepetinizde ${cart.length} kitap var.\nToplam: ${cart.reduce((sum, b) => sum + parseInt(b.price), 0)}₺`);
+        }
+
+        // ==================== KATEGORILER ====================
+        function renderCategories() {
+            const scroll = document.getElementById('categoriesScroll');
+            scroll.innerHTML = categoriesDatabase.map(cat => `
+                <div class="category-item" onclick="filterByCategory('${cat.name}')">
+                    <div class="category-icon">${cat.icon}</div>
+                    <div class="category-name">${cat.name}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterByCategory(category) {
+            const filtered = booksDatabase.filter(b => b.category === category);
+            showPage('home');
+            setTimeout(() => {
+                document.querySelector('.books-grid').innerHTML = '';
+                createBooksGrid('recommendedBooks', filtered);
+                document.querySelector('.books-grid').parentElement.querySelector('h2').textContent = `📂 ${category} Kategorisi`;
+            }, 100);
+        }
+
+        // ==================== YAZARLAR ====================
+        function renderAuthors() {
+            const container = document.getElementById('authorsList');
+            if (container) {
+                container.innerHTML = authorsDatabase.map(author => `
+                    <div class="author-card" onclick="filterByAuthor('${author.name}')">
+                        <div class="author-avatar">${author.icon}</div>
+                        <div class="author-name">${author.name}</div>
+                        <div class="author-country">${author.country}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function filterByAuthor(authorName) {
+            const filtered = booksDatabase.filter(b => b.author === authorName);
+            showPage('home');
+            setTimeout(() => {
+                createBooksGrid('recommendedBooks', filtered);
+            }, 100);
+        }
+
+        // ==================== SÖZLER ====================
+        function renderQuotes() {
+            const container = document.getElementById('quotesList');
+            if (container) {
+                container.innerHTML = quotes.map((quote, idx) => `
+                    <div class="quote-card">
+                        <div class="quote-text">"${quote.text}"</div>
+                        <div class="quote-author">— ${quote.author}</div>
+                        <div class="quote-author-image" style="font-size: 20px; line-height: 40px; text-align: center;">${quote.image}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function addQuote() {
+            const input = document.getElementById('newQuoteInput');
+            if (input.value.trim()) {
+                quotes.push({
+                    text: input.value,
+                    author: currentUser ? currentUser.name : 'Anonim',
+                    image: '👤'
+                });
+                input.value = '';
+                renderQuotes();
+                showAlert('Söz eklendi! 🌟', 'success');
+                userHistory.push({ action: 'Yeni bir söz ekledi', date: new Date().toLocaleString() });
+                saveUserData();
+            }
+        }
+
+        // ==================== ROZET SİSTEMİ ====================
+        function renderBadges() {
+            const container = document.getElementById('badgesContainer');
+            if (!container || !currentUser) return;
+
+            let badges = [];
+
+            if (userFavorites.length >= 5) badges.push({ icon: '🔍', text: 'Kitap Avcısı' });
+            if (userHistory.length >= 10) badges.push({ icon: '🌟', text: 'Etkin Üye' });
+            if (cart.length >= 3) badges.push({ icon: '🛍️', text: 'Alışveriş Severim' });
+            if (quotes.length >= 3) badges.push({ icon: '💬', text: 'Söz Editörü' });
+
+            container.innerHTML = badges.map(badge => `
+                <div class="badge badge-achievement" data-title="${badge.text}">
+                    <span class="badge-icon">${badge.icon}</span> ${badge.text}
+                </div>
+            `).join('');
+        }
+
+        // ==================== GEÇMİŞ ====================
+        function renderHistory() {
+            const container = document.getElementById('historyContent');
+            if (!currentUser) {
+                container.innerHTML = '<p>Geçmişi görmek için giriş yapın</p>';
+                return;
+            }
+            container.innerHTML = userHistory.length > 0 
+                ? `<ul>${userHistory.map((h, i) => `<li style="padding: 10px; border-bottom: 1px solid var(--border);">📌 ${h.action} - <small>${h.date}</small></li>`).join('')}</ul>`
+                : '<p>Henüz aktivite kaydı yok</p>';
+        }
+
+        // ==================== LİSTELER ====================
+        function createList() {
+            const input = document.getElementById('newListInput');
+            if (!currentUser) {
+                showAlert('Liste oluşturmak için giriş yapın!', 'error');
+                return;
+            }
+            if (input.value.trim()) {
+                userHistory.push({ action: `"${input.value}" isimli liste oluşturdu`, date: new Date().toLocaleString() });
+                saveUserData();
+                input.value = '';
+                renderMyLists();
+                showAlert('Liste oluşturuldu! 📋', 'success');
+            }
+        }
+
+        function renderMyLists() {
+            const container = document.getElementById('listsList');
+            container.innerHTML = `<p>Listelerin burada görünecek</p>`;
+        }
+
+        // ==================== SİPARİŞLER ====================
+        function renderOrders() {
+            const container = document.getElementById('ordersList');
+            if (!currentUser) return;
+            
+            const orders = cart.length > 0 ? cart.map((book, idx) => `
+                <div style="background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--primary);">
+                    <p><strong>Sipariş #${idx + 1}</strong></p>
+                    <p>${book.title} - ${book.price}₺</p>
+                    <p><small>Durum: 📦 Hazırlanıyor</small></p>
+                </div>
+            `).join('') : '<p>Henüz siparişiniz yok</p>';
+            
+            container.innerHTML = orders;
+        }
+
+        // ==================== PROFIL ====================
+        function renderProfile() {
+            if (!currentUser) return;
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('profileJoinDate').textContent = currentUser.joinDate;
+            document.getElementById('profileAvatar').textContent = currentUser.name[0].toUpperCase();
+        }
+
+        // ==================== ARAMA ====================
+        function searchBooks() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            const filtered = booksDatabase.filter(b => 
+                b.title.toLowerCase().includes(query) || 
+                b.author.toLowerCase().includes(query) ||
+                b.category.toLowerCase().includes(query)
+            );
+            createBooksGrid('recommendedBooks', filtered || booksDatabase);
+        }
+
+        // ==================== EFeAI CHATBOT ====================
+        function toggleEfeAI() {
+            const chat = document.getElementById('efeaiChat');
+            chat.classList.toggle('active');
+        }
+
+        function sendEfeAIGreeting() {
+            const messagesDiv = document.getElementById('efeaiMessages');
+            messagesDiv.innerHTML += `
+                <div class="efeai-message bot">
+                    Hoşgeldiniz! 👋 Ben EfeAI, size kitap bulmakta yardımcı olabilirim. 
+                    Arayacağınız kitabı yazabilir, türüne göre filtre yapabilir veya herhangi bir soru sorabilirsiniz. 
+                    Hangi kitabı arıyorsunuz?
+                </div>
+            `;
+        }
+
+        function sendEfeAIMessage() {
+            const input = document.getElementById('efeaiInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const messagesDiv = document.getElementById('efeaiMessages');
+            messagesDiv.innerHTML += `<div class="efeai-message user">${message}</div>`;
+
+            // Basit AI yanıtları
+            let response = "Özür dilerim, bunu anlayamadım. Kitap adı veya yazar adı söyleyebilir misiniz?";
+
+            if (booksDatabase.some(b => b.title.toLowerCase().includes(message.toLowerCase()))) {
+                const book = booksDatabase.find(b => b.title.toLowerCase().includes(message.toLowerCase()));
+                response = `✅ "${book.title}" kitabımız var! ${book.author} tarafından yazıldı, ${book.price}₺ fiyatında. İsterseniz sepete ekleyebilirim.`;
+            } else if (message.toLowerCase().includes('roman')) {
+                response = `Romanlar konusunda bize çok kitap var! ${booksDatabase.filter(b => b.category === 'Roman').length} romanımız vardır. Hangi türde bir roman arıyorsunuz?`;
+            } else if (message.toLowerCase().includes('yazar')) {
+                response = `En popüler yazarlarımız: ${authorsDatabase.slice(0, 3).map(a => a.name).join(', ')}`;
+            } else if (message.toLowerCase().includes('ucuz')) {
+                const cheapest = booksDatabase.reduce((min, b) => parseInt(b.price) < parseInt(min.price) ? b : min);
+                response = `En ucuz kitabımız: "${cheapest.title}" - ${cheapest.price}₺`;
+            } else if (message.toLowerCase().includes('pahalı')) {
+                const expensive = booksDatabase.reduce((max, b) => parseInt(b.price) > parseInt(max.price) ? b : max);
+                response = `En pahalı kitabımız: "${expensive.title}" - ${expensive.price}₺`;
+            }
+
+            messagesDiv.innerHTML += `<div class="efeai-message bot">${response}</div>`;
+            input.value = '';
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // ==================== YARDIMCI FONKSİYONLAR ====================
+        function getRandomBooks(count) {
+            return booksDatabase.sort(() => Math.random() - 0.5).slice(0, count);
+        }
+
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = message;
+            document.body.insertBefore(alert, document.body.firstChild);
+            setTimeout(() => alert.remove(), 3000);
+        }
+
+        function saveUserData() {
+            if (currentUser) {
+                const userData = {
+                    user: currentUser,
+                    favorites: userFavorites,
+                    history: userHistory,
+                    cart: cart
+                };
+                localStorage.setItem(`userData_${currentUser.id}`, JSON.stringify(userData));
+            }
+        }
+
+        function loadUserFromStorage() {
+            const user = localStorage.getItem('currentUser');
+            const theme = localStorage.getItem('theme') || 'light';
+            const language = localStorage.getItem('language') || 'tr';
+
+            if (user) {
+                currentUser = JSON.parse(user);
+                const userData = JSON.parse(localStorage.getItem(`userData_${currentUser.id}`) || '{}');
+                userFavorites = userData.favorites || [];
+                userHistory = userData.history || [];
+                cart = userData.cart || [];
+                updateUIAfterLogin();
+            }
+
+            setTheme(theme);
+            currentLanguage = language;
+        }
+
+        function initializePage() {
+            window.onclick = function(event) {
+                const loginModal = document.getElementById('loginModal');
+                const registerModal = document.getElementById('registerModal');
+                const bookDetailModal = document.getElementById('bookDetailModal');
+
+                if (event.target === loginModal) loginModal.style.display = 'none';
+                if (event.target === registerModal) registerModal.style.display = 'none';
+                if (event.target === bookDetailModal) bookDetailModal.style.display = 'none';
+            }
+        }
+
+        // Enter tuşu ile giriş yapabilme
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('loginModal').style.display === 'block') login();
+                if (document.getElementById('registerModal').style.display === 'block') register();
+                if (document.getElementById('efeaiInput') === document.activeElement) sendEfeAIMessage();
+            }
+        });
+    </script>
+</body>
+</html>
